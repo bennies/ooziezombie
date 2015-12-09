@@ -1,8 +1,11 @@
 # OozieZombie
 
-This project should help with some of the oozie pains you might run into. When you have close to a thousand coordinators
-running and you have a problem on the cluster the last thing you want to do is manually triggering a retry.
-If this happens in a weekend you would want it to keep retrying until you find time to look at the issue.
+This project should help with some of the [oozie](oozie.apache.org) pains you might run into. When you have close to a
+thousand coordinators running and you have a problem on the cluster the last thing you want to do is manually
+triggering a retry.
+
+But perhaps this will more serve as an example on how to use the oozie rest service for whatever needs you have.
+
 For now this isn't incredibly modular/generic and might drastically change.
 
 ## Main services
@@ -24,10 +27,11 @@ Maven 3.2+
 mvn package spring-boot:repackage
 
 You now have a jar in the target dir which you can directly use:
-java -jar target/OozieZombie-0.0.1.jar
+java -jar target/OozieZombie-<version>.jar
 
 ### Start it like a deamon on the cli as your own user
-nohup java -Xmx128m -jar OozieZombie-0.0.1.jar &
+nohup java -Xmx128m -jar OozieZombie-<version>.jar &
 
-If you want to make some config changes on the machine you run this on create a file called application.properties and add properties there.
+If you want to make some config changes on the machine you run this on create a file called application.properties and
+add properties there.
 
