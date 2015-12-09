@@ -24,13 +24,20 @@ Java 1.7+
 Maven 3.2+
 
 ### How to create a jar
+```
 mvn package spring-boot:repackage
+```
 
 You now have a jar in the target dir which you can directly use:
+
+```
 java -jar target/OozieZombie-<version>.jar
+```
 
 ### Start it like a deamon on the cli as your own user
+```
 nohup java -Xmx128m -jar OozieZombie-<version>.jar &
+```
 
 If you want to make some config changes on the machine you run this on create a file called application.properties and
 add properties there.
