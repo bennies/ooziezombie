@@ -1,7 +1,7 @@
 package com.booking.ooziezombie;
 
 import com.booking.ooziezombie.services.FailedActionsRerun;
-import com.booking.ooziezombie.services.FailedCoordinatorSuspend;
+import com.booking.ooziezombie.services.SuspendedCoordinatorKill;
 import com.booking.ooziezombie.services.OozieStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class Application implements CommandLineRunner {
     @Autowired
     private FailedActionsRerun failedActionsRerun;
     @Autowired
-    private FailedCoordinatorSuspend failedCoordinatorSuspend;
+    private SuspendedCoordinatorKill suspendedCoordinatorKill;
     @Autowired
     private OozieStatus oozieStatus;
 
@@ -41,8 +41,8 @@ public class Application implements CommandLineRunner {
     public void run(String... strings) throws Exception {
         while(true) {
             if (oozieStatus.getStatus().equals("NORMAL")) {
-                failedActionsRerun.run();
-                failedCoordinatorSuspend.run();
+                //failedActionsRerun.run();
+                suspendedCoordinatorKill.run();
             }
             try {
                 log.info("Going to sleep for "+sleepBetweenRuns+"ms.");

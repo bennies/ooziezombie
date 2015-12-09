@@ -14,7 +14,6 @@ import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.ConnectException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -23,8 +22,8 @@ import java.util.*;
 
 @Configuration
 @EnableRetry
-public class FailedCoordinatorSuspend {
-    private static final Logger log = LoggerFactory.getLogger(FailedCoordinatorSuspend.class);
+public class SuspendedCoordinatorKill {
+    private static final Logger log = LoggerFactory.getLogger(SuspendedCoordinatorKill.class);
 
     @Value("${oozie.host}")
     private String oozieHost;

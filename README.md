@@ -11,11 +11,11 @@ For now this isn't incredibly modular/generic and might drastically change.
 ## Main services
 
 ### FailedActionsRerun
-Look at each running coordinator and it's actions and decide to rerun them based on some criteria.
+* Look at each running coordinator and it's actions and decide to rerun them based on some criteria.
+* Look at constantly failing coordinators and after some time decide to suspend them.
 
-### FailedCoordinatorSuspend
-Look at constantly failing coordinators and after some time decide to suspend them. Also look at suspended coordinators
-and after some time decide to kill them.
+### SuspendedCoordinatorKill
+Look at suspended coordinators and if they have been suspended for x days kill them.
 
 ## Build
 
