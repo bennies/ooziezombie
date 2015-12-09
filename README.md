@@ -36,7 +36,7 @@ java -jar target/OozieZombie-<version>.jar
 
 ### Start it like a deamon on the cli as your own user
 ```
-nohup java -Xmx128m -jar OozieZombie-<version>.jar &
+nohup java -Xmx64m -jar OozieZombie-<version>.jar &
 ```
 
 If you want to make some config changes on the machine you run this on create a file called application.properties and
