@@ -38,7 +38,7 @@ public class FailedActionsRerun {
     @Autowired
     private WorkflowState workflowState;
 
-    @Retryable(ConnectException.class)
+    @Retryable(maxAttempts=5)
     public void run() throws URISyntaxException, ParseException {
         RestTemplate restTemplate = new RestTemplate();
         int offset = 1, batchSize = 50, totalRecords = 2;

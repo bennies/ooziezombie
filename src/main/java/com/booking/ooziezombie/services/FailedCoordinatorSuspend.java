@@ -32,7 +32,7 @@ public class FailedCoordinatorSuspend {
     @Autowired
     private CoordinatorState coordinatorState;
 
-    @Retryable(ConnectException.class)
+    @Retryable(maxAttempts=5)
     public void run() throws URISyntaxException, ParseException {
         Calendar farInThePast = Calendar.getInstance();
         farInThePast.add(Calendar.DAY_OF_MONTH, killThisOld);
