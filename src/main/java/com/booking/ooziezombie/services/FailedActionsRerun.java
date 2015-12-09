@@ -28,6 +28,9 @@ public class FailedActionsRerun {
     private long coordinatorFetchPause;
     @Value("${stuck.action.timeout.minutes}")
     private int stuckActionTimeoutMinutes;
+    @Value("${coordinator.failedactionsrerun.exclude}")
+    private Set excludeCoordinators;
+
     @Autowired
     private WorkflowState workflowState;
 
@@ -50,22 +53,24 @@ public class FailedActionsRerun {
     public void walkCoordinators(final List<Job> jobs) throws URISyntaxException, ParseException {
         int batchSize = 100;
         for (final Job job : jobs) {
-            RestTemplate restTemplate = new RestTemplate();
-            URI uri = new URI(oozieHost + "oozie/v1/job/" + job.getCoordJobId() + "?show=info&order=desc&len=" + batchSize + "&offset=1");
-            ResponseEntity<Job> runningJobs = restTemplate.getForEntity(uri, Job.class);
-            CoordinatorStatus cs = walkActions(job, runningJobs.getBody().getActions());
-            if (cs.failedKilledActions > 0 && cs.succeededActions == 0) {
-                log.info("Zombie coordinator:" + job.getCoordJobName()
-                                + " Status:" + job.getStatus()
-                                + " Id:" + job.getCoordJobId()
-                                + " failed/killed:" + cs.failedKilledActions
-                                + " running:" + cs.runningActions
-                );
-                // In theory we could decide to suspend at this point. Figure out how to deal with unsuspending without this script suspending it again within an hour.
-            }
-            try {
-                Thread.sleep(coordinatorFetchPause);
-            } catch (InterruptedException e) {
+            if (!excludeCoordinators.contains(job.getCoordJobName())) {
+                RestTemplate restTemplate = new RestTemplate();
+                URI uri = new URI(oozieHost + "oozie/v1/job/" + job.getCoordJobId() + "?show=info&order=desc&len=" + batchSize + "&offset=1");
+                ResponseEntity<Job> runningJobs = restTemplate.getForEntity(uri, Job.class);
+                CoordinatorStatus cs = walkActions(job, runningJobs.getBody().getActions());
+                if (cs.failedKilledActions > 0 && cs.succeededActions == 0) {
+                    log.info("Zombie coordinator:" + job.getCoordJobName()
+                                    + " Status:" + job.getStatus()
+                                    + " Id:" + job.getCoordJobId()
+                                    + " failed/killed:" + cs.failedKilledActions
+                                    + " running:" + cs.runningActions
+                    );
+                    // In theory we could decide to suspend at this point. Figure out how to deal with unsuspending without this script suspending it again within an hour.
+                }
+                try {
+                    Thread.sleep(coordinatorFetchPause);
+                } catch (InterruptedException e) {
+                }
             }
         }
     }
