@@ -10,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -19,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Configuration
+@EnableRetry
 public class FailedActionsRerun {
     private static final Logger log = LoggerFactory.getLogger(FailedActionsRerun.class);
 
@@ -34,6 +38,7 @@ public class FailedActionsRerun {
     @Autowired
     private WorkflowState workflowState;
 
+    @Retryable(ConnectException.class)
     public void run() throws URISyntaxException, ParseException {
         RestTemplate restTemplate = new RestTemplate();
         int offset = 1, batchSize = 50, totalRecords = 2;
