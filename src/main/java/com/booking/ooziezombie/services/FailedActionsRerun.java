@@ -33,6 +33,8 @@ public class FailedActionsRerun {
     private long coordinatorFetchPause;
     @Value("${stuck.action.timeout.minutes}")
     private int stuckActionTimeoutMinutes;
+    @Value("${coordinator.failedactionsrerun.batchsize}")
+    private int batchSize;
     @Value("${coordinator.failedactionsrerun.exclude}")
     private Set excludeCoordinators;
 
@@ -57,7 +59,6 @@ public class FailedActionsRerun {
     }
 
     public void walkCoordinators(final List<Job> jobs) throws URISyntaxException, ParseException {
-        int batchSize = 100;
         for (final Job job : jobs) {
             if (!excludeCoordinators.contains(job.getCoordJobName())) {
                 RestTemplate restTemplate = new RestTemplate();
@@ -90,6 +91,7 @@ public class FailedActionsRerun {
      * @throws URISyntaxException
      */
     public CoordinatorStatus walkActions(final Job job, final List<Action> actions) throws ParseException, URISyntaxException {
+        log.info("Walking actions for:"+job.getCoordJobName());
         Calendar now = Tools.removeTime(Calendar.getInstance());
         Calendar weekAgo = Calendar.getInstance();
         weekAgo.add(Calendar.DAY_OF_MONTH, -8);
@@ -112,15 +114,16 @@ public class FailedActionsRerun {
                     }
                 } else if (action.getStatus().equals("RUNNING")) {
                     cs.runningActions++;
-                    Calendar timeAgo = Calendar.getInstance();
-                    timeAgo.add(Calendar.MINUTE, stuckActionTimeoutMinutes);
-                    Calendar lastDate = workflowState.getLastDateFromLog(workflowState.getLast5MinLog(action));
-                    if (lastDate!=null && lastDate.before(timeAgo)) {
-                        // no logs in the last 40min kill and rerun.
-                        log.info("No logs in the last "+stuckActionTimeoutMinutes+"min.. perhaps we should kill this:"+action.getExternalId());
-                        //workflowState.change(action, "kill");
-                        //workflowState.change(action, "rerun");
-                    }
+                    // @TODO This doesn't seem to work it's the stdout logs which might contain info, rethink:
+//                    Calendar timeAgo = Calendar.getInstance();
+//                    timeAgo.add(Calendar.MINUTE, stuckActionTimeoutMinutes);
+//                    Calendar lastDate = workflowState.getLastDateFromLog(workflowState.getLast5MinLog(action));
+//                    if (lastDate!=null && lastDate.before(timeAgo)) {
+//                        // no logs in the last 40min kill and rerun.
+//                        log.info("No logs in the last "+stuckActionTimeoutMinutes+"min.. perhaps we should kill this:"+action.getExternalId());
+//                        //workflowState.change(action, "kill");
+//                        //workflowState.change(action, "rerun");
+//                    }
                 } else if (action.getStatus().equals("SUCCEEDED")) {
                     cs.succeededActions++;
                 } else if (action.getStatus().equals("READY")) {
