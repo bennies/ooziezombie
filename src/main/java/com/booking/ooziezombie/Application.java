@@ -41,7 +41,7 @@ public class Application implements CommandLineRunner {
     public void run(String... strings) throws Exception {
         while(true) {
             if (oozieStatus.getStatus().equals("NORMAL")) {
-                //failedActionsRerun.run();
+                failedActionsRerun.run();
                 suspendedCoordinatorKill.run();
             }
             try {
